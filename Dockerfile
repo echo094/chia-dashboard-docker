@@ -4,6 +4,10 @@ FROM node:current-alpine
 WORKDIR /
 
 RUN \
+  echo "**** install runtime ****" && \
+  apk update && apk add bash
+
+RUN \
   echo "**** install pm2 ****" && \
   npm install pm2 -g
 
@@ -24,7 +28,9 @@ RUN \
   echo "**** install chia-dashboard-core ****" && \
   cd chia-dashboard-core && npm install
 
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY docker-entrypoint.sh /
+
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
 ENV DATABASE_URL=""
 ENV JWT_SIGNING_SECRET=""
@@ -33,5 +39,5 @@ ENV GOOGLE_CLIENT_SECRET=""
 
 EXPOSE 5000
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
